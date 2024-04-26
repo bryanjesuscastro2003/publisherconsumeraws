@@ -59,6 +59,28 @@ class SQS {
         return response.Messages && response.Messages.length > 0;
     }
 
+    readOneMessage = async () => { 
+        const queueUrl = await this.getQueueUrl();
+        const command = new ReceiveMessageCommand({
+            QueueUrl: queueUrl,
+            MaxNumberOfMessages: 1,
+        });
+        const response = await client.send(command);
+        if (response.Messages && response.Messages.length > 0) {
+            console.log(response.Messages[0]);
+            const deleteCommand = new DeleteMessageCommand({
+                QueueUrl: queueUrl,
+                ReceiptHandle: message.ReceiptHandle,
+            });
+            await client.send(deleteCommand);
+        }
+    }
+
+
+
+
+
+
     receiveMessage = async () => {
         const queueUrl = await this.getQueueUrl();
         const command = new ReceiveMessageCommand({

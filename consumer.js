@@ -25,22 +25,10 @@ app.get('/consume', async (req, res) => {
   while (message === null) {
     const isMessageAvailable = await sqs.isMessageAvailable();
     if (isMessageAvailable) {
-      const queueUrl = await sqs.getQueueUrl();
-      const command = new ReceiveMessageCommand({
-        QueueUrl: queueUrl,
-        MaxNumberOfMessages: 1,
-      });
-      const response = await client.send(command);
-      message = response.Messages[0];
-      console.log(message);
-      const deleteCommand = new DeleteMessageCommand({
-        QueueUrl: queueUrl,
-        ReceiptHandle: message.ReceiptHandle,
-      });
-      await client.send(deleteCommand);
+        await sqs.readOneMessage();
     }
   }
-  res.send(message);
+  res.send("Consume done successfully");
 });
 
 
