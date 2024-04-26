@@ -3,11 +3,6 @@ const cors = require('cors');
 const app = express();
 const port = 80;
 const { SQS } = require('./actions/index');
-const { 
-  ReceiveMessageCommand,
-  DeleteMessageCommand,
-  DeleteMessageBatchCommand,
-} = require("@aws-sdk/client-sqs")
 
 
 app.use(cors());
@@ -19,8 +14,8 @@ app.get('/', (req, res) => {
 });
 
 // i wanna be pending until a message is available in the queue if so, i will consume it, delete it and print it
+const sqs = new SQS();
 app.get('/consume', async (req, res) => {
-  const sqs = new SQS();
     let message = null;
     let messages = [];
   while (message === null) {
@@ -33,6 +28,21 @@ app.get('/consume', async (req, res) => {
   }
   res.send(messages);
 });
+
+const checkMessages = async () => { 
+    try {
+      const isMessageAvailable = await sqs.isMessageAvailable();
+      if (isMessageAvailable) {
+          console.log(await sqs.readOneMessage())
+      } else { 
+          console.log("No messages available");
+      }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+setInterval(checkMessages, 1000);
 
 
 app.listen(port, () => {
