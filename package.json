@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.564.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
