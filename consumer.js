@@ -21,14 +21,15 @@ app.get('/', (req, res) => {
 // i wanna be pending until a message is available in the queue if so, i will consume it, delete it and print it
 app.get('/consume', async (req, res) => {
   const sqs = new SQS();
-  let message = null;
+    let message = null;
+    let messages = [];
   while (message === null) {
     const isMessageAvailable = await sqs.isMessageAvailable();
     if (isMessageAvailable) {
-        await sqs.readOneMessage();
+        messages.push(await sqs.readOneMessage());
     }
   }
-  res.send("Consume done successfully");
+  res.send(messages);
 });
 
 

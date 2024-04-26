@@ -61,6 +61,7 @@ class SQS {
 
     readOneMessage = async () => { 
         const queueUrl = await this.getQueueUrl();
+        const message = ""
         const command = new ReceiveMessageCommand({
             QueueUrl: queueUrl,
             MaxNumberOfMessages: 1,
@@ -70,10 +71,12 @@ class SQS {
             console.log(response.Messages[0]);
             const deleteCommand = new DeleteMessageCommand({
                 QueueUrl: queueUrl,
-                ReceiptHandle: message.ReceiptHandle,
+                ReceiptHandle: response.Messages[0].ReceiptHandle,
             });
+            message = response.Messages[0].Body;
             await client.send(deleteCommand);
         }
+        return message;
     }
 
 
