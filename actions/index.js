@@ -61,7 +61,7 @@ class SQS {
 
     readOneMessage = async () => { 
         const queueUrl = await this.getQueueUrl();
-        const message = ""
+        let message = ""
         const command = new ReceiveMessageCommand({
             QueueUrl: queueUrl,
             MaxNumberOfMessages: 1,
