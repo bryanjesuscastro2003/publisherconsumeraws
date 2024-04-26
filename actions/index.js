@@ -1,8 +1,8 @@
-import {
+const {
     GetQueueUrlCommand, SQSClient,
     SendMessageCommand,
     paginateListQueues
-} from "@aws-sdk/client-sqs";
+} = require("@aws-sdk/client-sqs");
 
 const { 
   ReceiveMessageCommand,
@@ -17,7 +17,7 @@ const client = new SQSClient({
 });
 const SQS_QUEUE_NAME = "my_queue";
 
-export class SQS {
+class SQS {
    
     getQueueUrl = async () => {
     const command = new GetQueueUrlCommand({
@@ -93,9 +93,6 @@ export class SQS {
         return response;
     }
 
-
-
-
-
-
 }
+
+module.exports = { SQS };
