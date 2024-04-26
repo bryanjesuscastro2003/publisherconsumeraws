@@ -4,6 +4,14 @@ import {
     paginateListQueues
 } from "@aws-sdk/client-sqs";
 
+const { 
+  ReceiveMessageCommand,
+  DeleteMessageCommand,
+  DeleteMessageBatchCommand,
+} = require("@aws-sdk/client-sqs")
+
+
+
 const client = new SQSClient({
     region: "us-east-1" 
 });
@@ -40,6 +48,54 @@ export class SQS {
         const response = await client.send(command);
         return response;
     }
+
+    isMessageAvailable = async () => { 
+        const queueUrl = await this.getQueueUrl();
+        const command = new ReceiveMessageCommand({
+            QueueUrl: queueUrl,
+            MaxNumberOfMessages: 1,
+        });
+        const response = await client.send(command);
+        return response.Messages && response.Messages.length > 0;
+    }
+
+    receiveMessage = async () => {
+        const queueUrl = await this.getQueueUrl();
+        const command = new ReceiveMessageCommand({
+            QueueUrl: queueUrl,
+            MaxNumberOfMessages: 10,
+        });
+        const response = await client.send(command);
+        return response;
+    }
+
+    deleteMessage = async (receiptHandle) => {
+        const queueUrl = await this.getQueueUrl();
+        const command = new DeleteMessageCommand({
+            QueueUrl: queueUrl,
+            ReceiptHandle: receiptHandle,
+        });
+        const response = await client.send(command);
+        return response;
+    }
+
+    deleteMessageBatch = async (receiptHandles) => {
+        const queueUrl = await this.getQueueUrl();
+        const entries = receiptHandles.map((receiptHandle, i) => ({
+            Id: `msg${i}`,
+            ReceiptHandle: receiptHandle,
+        }));
+        const command = new DeleteMessageBatchCommand({
+            QueueUrl: queueUrl,
+            Entries: entries,
+        });
+        const response = await client.send(command);
+        return response;
+    }
+
+
+
+
 
 
 }
