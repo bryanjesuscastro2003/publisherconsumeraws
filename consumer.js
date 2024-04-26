@@ -25,9 +25,11 @@ app.get('/consume', async (req, res) => {
     let messages = [];
   while (message === null) {
     const isMessageAvailable = await sqs.isMessageAvailable();
-    if (isMessageAvailable) {
-        messages.push(await sqs.readOneMessage());
-    }
+      if (isMessageAvailable) {
+          messages.push(await sqs.readOneMessage());
+      } else { 
+          message = "No messages available";
+      }
   }
   res.send(messages);
 });
